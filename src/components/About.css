@@ -1,0 +1,103 @@
+.section-title {
+  margin-bottom: 3rem;
+  text-align: center;
+}
+
+.section-title h2 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.underline {
+  width: 60px;
+  height: 4px;
+  background: var(--primary);
+  margin: 0 auto;
+  border-radius: 2px;
+}
+
+.about-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 4rem;
+  align-items: center;
+}
+
+.about-content p {
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+  font-size: 1.05rem;
+}
+
+.education-list {
+  margin-top: 2rem;
+}
+
+.education-list h3 {
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+}
+
+.edu-item {
+  margin-bottom: 1.5rem;
+  padding-left: 1.5rem;
+  border-left: 2px solid var(--glass-border);
+  transition: var(--transition);
+}
+
+.edu-item:hover {
+  border-left-color: var(--primary);
+}
+
+.edu-item h4 {
+  font-size: 1.1rem;
+  color: var(--text-main);
+}
+
+.edu-item p {
+  font-size: 0.9rem;
+  margin-bottom: 0.2rem;
+}
+
+.edu-meta {
+  font-size: 0.85rem;
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.about-stats {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  padding: 3rem;
+}
+
+.stat-card {
+  text-align: center;
+}
+
+.stat-number {
+  display: block;
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--primary);
+  font-family: var(--font-heading);
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+@media (max-width: 992px) {
+  .about-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .about-stats {
+    grid-template-columns: repeat(3, 1fr);
+    padding: 2rem;
+  }
+}

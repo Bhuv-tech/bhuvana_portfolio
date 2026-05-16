@@ -1,0 +1,8 @@
+/* App.css */
+.footer {
+  padding: 4rem 0;
+  text-align: center;
+  border-top: 1px solid var(--glass-border);
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
