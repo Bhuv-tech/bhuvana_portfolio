@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React from 'react';
+import { motion } from 'framer-motion';
 import ProjectCard from './ProjectCard';
 import './Projects.css';
 
-const initialProjects = [
+const projectsData = [
   {
     title: 'Smart Expense Tracker with ML Prediction',
     tech: 'Python, Django, Scikit-learn, Chart.js, SQLite, Gunicorn, Render',
@@ -86,48 +86,47 @@ const initialProjects = [
   }
 ];
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.2,
+      delayChildren: 0.1,
+    }
+  }
+};
+
 const Projects = () => {
-  const [projects, setProjects] = useState(initialProjects);
-
-  const handleShuffle = () => {
-    setProjects((prev) => {
-      const copy = [...prev];
-      const first = copy.shift();
-      copy.push(first);
-      return copy;
-    });
-  };
-
   return (
     <section id="projects" className="projects container">
       <motion.div 
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
         className="section-title"
       >
         <h2 className="gradient-text">Featured Projects</h2>
         <div className="underline"></div>
-        <p className="section-subtitle-stack">Swipe left to shuffle or click to see details</p>
+        <p className="section-subtitle">Hover over cards to see details</p>
       </motion.div>
       
-      <div className="projects-stack-container">
-        {projects.map((project, index) => {
-          let position = "back";
-          if (index === 0) position = "front";
-          else if (index === 1) position = "middle";
-
-          return (
-            <ProjectCard
-              key={project.title}
-              project={project}
-              position={position}
-              isFront={index === 0}
-              handleShuffle={handleShuffle}
-            />
-          );
-        })}
-      </div>
+      <motion.div 
+        className="projects-grid"
+        variants={containerVariants}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-100px" }}
+      >
+        {projectsData.map((project, index) => (
+          <ProjectCard
+            key={project.title}
+            project={project}
+            index={index}
+          />
+        ))}
+      </motion.div>
     </section>
   );
 };

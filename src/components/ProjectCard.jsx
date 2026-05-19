@@ -1,124 +1,105 @@
 import React, { useState, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion';
 
-const ProjectCard = ({ handleShuffle, project, position, isFront }) => {
+const ProjectCard = ({ project, index }) => {
   const [showDetails, setShowDetails] = useState(false);
-  const dragRef = useRef(0);
+  const cardRef = useRef(null);
 
-  // Position-based styles
-  const getZIndex = () => {
-    if (position === "front") return 10;
-    if (position === "middle") return 5;
-    return 0;
+  // Motion values for mouse position
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+
+  // Springs for smooth movement
+  const rotateX = useSpring(useTransform(y, [-150, 150], [15, -15]), { stiffness: 150, damping: 20 });
+  const rotateY = useSpring(useTransform(x, [-150, 150], [-15, 15]), { stiffness: 150, damping: 20 });
+
+  const handleMouseMove = (e) => {
+    if (!cardRef.current || showDetails) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const width = rect.width;
+    const height = rect.height;
+    
+    // Calculate coordinates relative to card center
+    const mouseX = e.clientX - rect.left - width / 2;
+    const mouseY = e.clientY - rect.top - height / 2;
+
+    x.set(mouseX);
+    y.set(mouseY);
   };
 
-  const getRotation = () => {
-    if (position === "front") return -6;
-    if (position === "middle") return 0;
-    return 6;
+  const handleMouseLeave = () => {
+    x.set(0);
+    y.set(0);
   };
 
-  const getX = () => {
-    if (position === "front") return "0%";
-    if (position === "middle") return "20%";
-    return "40%";
-  };
-
-  const getOpacity = () => {
-    if (position === "front") return 1;
-    if (position === "middle") return 0.8;
-    return 0.6;
-  };
-
-  const handleCardClick = () => {
-    if (isFront) {
-      setShowDetails(!showDetails);
-    }
+  const handleCardClick = (e) => {
+    // Only toggle on tap/click
+    setShowDetails(!showDetails);
+    // Reset tilt
+    x.set(0);
+    y.set(0);
   };
 
   return (
-    <motion.div
-      style={{
-        zIndex: getZIndex(),
-        opacity: getOpacity(),
-        cursor: isFront ? (showDetails ? 'pointer' : 'grab') : 'default'
-      }}
-      animate={{
-        rotate: getRotation(),
-        x: getX(),
-        scale: isFront ? 1 : 0.95
-      }}
-      drag={isFront && !showDetails}
-      dragElastic={0.35}
-      dragConstraints={{ top: 0, left: 0, right: 0, bottom: 0 }}
-      onDragStart={(e) => {
-        dragRef.current = e.clientX;
-      }}
-      onDragEnd={(e) => {
-        if (dragRef.current - e.clientX > 100) {
-          handleShuffle();
-          setShowDetails(false);
-        }
-        dragRef.current = 0;
-      }}
-      onClick={handleCardClick}
-      transition={{ type: "spring", stiffness: 260, damping: 20 }}
-      className={`project-card-stack glass ${isFront ? 'is-front' : ''} ${showDetails ? 'show-details' : ''}`}
+    <div 
+      style={{ perspective: 1000 }} 
+      className="project-card-container"
     >
-      <div className="card-inner">
-        {/* Front Face: Image Only */}
-        <div className="card-face card-front">
+      <motion.div
+        ref={cardRef}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+        onClick={handleCardClick}
+        style={{
+          rotateX: showDetails ? 0 : rotateX,
+          rotateY: showDetails ? 0 : rotateY,
+          transformStyle: "preserve-3d",
+          cursor: 'pointer'
+        }}
+        initial={{ opacity: 0, y: 50 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ type: "spring", stiffness: 100, damping: 15, delay: index * 0.1 }}
+        className={`project-card glass ${showDetails ? 'show-details' : ''}`}
+      >
+        <div className="card-inner" style={{ transform: "translateZ(30px)" }}>
+          {/* Front Face: Image & Title */}
           <div className="project-image-wrapper">
             <img 
               src={project.image} 
               alt={project.title} 
-              className="project-image-stack" 
+              className="project-image" 
               onError={(e) => {
                 e.target.src = 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=800'; // Fallback
               }}
             />
-            <div className="project-tag-stack">{project.tag}</div>
-          </div>
-          <div className="project-title-preview">
-            <h3>{project.title}</h3>
-            <p className="click-hint">Click to see details</p>
-          </div>
-        </div>
-
-        {/* Back Face / Details Overlay: Full Info */}
-        <AnimatePresence>
-          {showDetails && (
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 20 }}
-              className="card-details-overlay"
-            >
+            <div className="project-tag" style={{ transform: "translateZ(40px)" }}>{project.tag}</div>
+            <div className="project-title-preview">
               <h3>{project.title}</h3>
-              <ul className="project-desc-stack">
+              <span className="mobile-hint">Click / Tap to view details</span>
+            </div>
+          </div>
+
+          {/* Details Overlay */}
+          <div className="card-details-hover">
+            <div className="hover-content">
+              <h3>{project.title}</h3>
+              <ul className="project-desc">
                 {project.desc.map((item, i) => (
                   <li key={i}>{item}</li>
                 ))}
               </ul>
-              <div className="project-tech-stack">
+              <div className="project-tech">
                 {project.tech.split(', ').map((t, i) => (
-                  <span key={i} className="tech-tag-stack">{t}</span>
+                  <span key={i} className="tech-tag">{t}</span>
                 ))}
               </div>
-              <button 
-                className="btn btn-primary close-details"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setShowDetails(false);
-                }}
-              >
-                Back to View
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-    </motion.div>
+              <span className="mobile-hint close-hint">Click / Tap to close</span>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+    </div>
   );
 };
 

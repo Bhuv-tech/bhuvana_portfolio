@@ -37,7 +37,7 @@ const Header = () => {
     <header className={`header glass ${scrolled ? 'scrolled' : ''}`}>
       <div className="container header-content">
         <div className="logo">
-          <motion.span 
+          <motion.span
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             className="gradient-text"
@@ -49,7 +49,7 @@ const Header = () => {
           <ul className="nav-list">
             {navItems.map((item) => (
               <li key={item.name}>
-                <a 
+                <a
                   href={item.href}
                   onClick={() => setActiveTab(item.name)}
                   className={activeTab === item.name ? 'active' : ''}

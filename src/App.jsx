@@ -14,10 +14,15 @@ function App() {
       <Header />
       <main>
         <Hero />
+        <div className="section-divider"></div>
         <About />
+        <div className="section-divider"></div>
         <Skills />
+        <div className="section-divider"></div>
         <Experience />
+        <div className="section-divider"></div>
         <Projects />
+        <div className="section-divider"></div>
         <Contact />
       </main>
       <footer className="footer container">

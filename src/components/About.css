@@ -94,10 +94,27 @@
 @media (max-width: 992px) {
   .about-grid {
     grid-template-columns: 1fr;
+    gap: 3rem;
   }
   
   .about-stats {
     grid-template-columns: repeat(3, 1fr);
     padding: 2rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .about-stats {
+    grid-template-columns: 1fr;
+    padding: 1.5rem;
+    gap: 1rem;
+  }
+  
+  .stat-number {
+    font-size: 2rem;
+  }
+  
+  .education-list h3 {
+    font-size: 1.3rem;
   }
 }
